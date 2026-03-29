@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BetOnYou</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>BetOnYou </h1>
+
+<h2>Create a Goal</h2>
+<form action="/add_goal" method="POST">
+    <input type="text" name="name" placeholder="Goal (e.g. Study 2 hrs)" required>
+
+    <select name="duration">
+        <option>Daily</option>
+        <option>Weekly</option>
+        <option>Monthly</option>
+    </select>
+
+    <input type="number" name="money" placeholder="Money ($)" required>
+
+    <button type="submit">Add Goal</button>
+</form>
+
+<hr>
+
+<h2>Your Goals</h2>
+
+<ul>
+{% for goal in goals %}
+    <li>
+        <b>{{ goal.name }}</b> | {{ goal.duration }} | ${{ goal.money }}
+        <br>
+        Streak: {{ goal.streak }}
+        <br>
+        Status: {{ goal.status }}
+        <br><br>
+
+        <!-- These match your Python routes -->
+        <a href="/complete/{{ loop.index0 }}">Complete</a> | 
+        <a href="/fail/{{ loop.index0 }}">Fail</a>
+
+        <hr>
+    </li>
+{% else %}
+    <p>No goals yet. Add one above </p>
+{% endfor %}
+</ul>
+
+</body>
+</html>

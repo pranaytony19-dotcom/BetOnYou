@@ -1,0 +1,22 @@
+body{
+    font-family: Arial; 
+    text-align: center; 
+    margin-top: 50px;
+    background: #ff6f00;
+    color: #ede8e8;
+}
+
+input, select {
+    padding: 10px;
+    margin: 5px;
+}
+
+button {
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+li{
+    list-style: none;
+    margin: 20px;
+}
