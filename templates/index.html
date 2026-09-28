@@ -6,7 +6,15 @@
 </head>
 <body>
 
-<h1>BetOnYou </h1>
+<h1>BetOnYou</h1>
+
+<div class="nav">
+    <button onclick="showDashboard()">Dashboard</button>
+    <button onclick="showGoals()">Your Goals</button>
+    <button onclick="showTrack()">Track</button>
+    <button onclick="showStreak()">Streak</button>
+    <button onclick="showMoney()">Money</button>
+</div>
 
 <h2>Create a Goal</h2>
 <form action="/add_goal" method="POST">
@@ -25,28 +33,104 @@
 
 <hr>
 
-<h2>Your Goals</h2>
+<!-- Dashboard -->
+<div id="dashboardSection">
+    <h3>Dashboard</h3>
+    <p>Total Goals: {{ goals|length }}</p>
+    <p>Total Money at Risk: ${{ total }}</p>
+</div>
 
-<ul>
-{% for goal in goals %}
-    <li>
-        <b>{{ goal.name }}</b> | {{ goal.duration }} | ${{ goal.money }}
-        <br>
-        Streak: {{ goal.streak }}
-        <br>
-        Status: {{ goal.status }}
-        <br><br>
+<!-- Goals -->
+<div id="goalsSection">
+    <h2>Your Goals</h2>
 
-        <!-- These match your Python routes -->
-        <a href="/complete/{{ loop.index0 }}">Complete</a> | 
-        <a href="/fail/{{ loop.index0 }}">Fail</a>
+    {% for goal in goals %}
+        <div class="card">
+            <b>{{ goal.name }}</b> | {{ goal.duration }} | ${{ goal.money }}
+            <br>
+            Status: {{ goal.status }}
+            <br><br>
 
-        <hr>
-    </li>
-{% else %}
-    <p>No goals yet. Add one above </p>
-{% endfor %}
-</ul>
+            <a href="/complete/{{ loop.index0 }}">Complete</a> |
+            <a href="/fail/{{ loop.index0 }}">Fail</a> |
+            <a href="/delete/{{ loop.index0 }}">Delete</a>
+        </div>
+    {% else %}
+        <p>No goals yet.</p>
+    {% endfor %}
+</div>
+
+<!-- Track -->
+<div id="trackSection">
+    <h3>Track Progress</h3>
+
+    <p>Total Goals: {{ goals|length }}</p>
+
+    <p>
+        Completed:
+        {{ goals | selectattr("completed", "equalto", True) | list | length }}
+    </p>
+
+    <p>
+        Failed:
+        {{ goals | selectattr("failed", "equalto", True) | list | length }}
+    </p>
+
+    <p>
+        In Progress:
+        {{ goals | selectattr("status", "equalto", "In Progress") | list | length }}
+    </p>
+</div>
+
+<!-- Streak -->
+<div id="streakSection">
+    <h3>Streak Stats</h3>
+
+    <p>
+        Current:
+        {{ goals | map(attribute='streak') | max if goals else 0 }}
+    </p>
+
+    <p>
+        Longest:
+        {{ goals | map(attribute='streak') | max if goals else 0 }}
+    </p>
+</div>
+
+<!-- Money -->
+<div id="moneySection">
+    <h3>Money 💰</h3>
+
+    <p>Total: ${{ total }}</p>
+
+    <p>
+        Earned:
+        ${{ goals | selectattr("completed","equalto",True) | map(attribute="money") | sum }}
+    </p>
+
+    <p>
+        Lost:
+        ${{ goals | selectattr("failed","equalto",True) | map(attribute="money") | sum }}
+    </p>
+</div>
+
+<script>
+function hideAll() {
+    document.getElementById("dashboardSection").style.display = "none";
+    document.getElementById("goalsSection").style.display = "none";
+    document.getElementById("trackSection").style.display = "none";
+    document.getElementById("streakSection").style.display = "none";
+    document.getElementById("moneySection").style.display = "none";
+}
+
+function showDashboard() { hideAll(); document.getElementById("dashboardSection").style.display = "block"; }
+function showGoals() { hideAll(); document.getElementById("goalsSection").style.display = "block"; }
+function showTrack() { hideAll(); document.getElementById("trackSection").style.display = "block"; }
+function showStreak() { hideAll(); document.getElementById("streakSection").style.display = "block"; }
+function showMoney() { hideAll(); document.getElementById("moneySection").style.display = "block"; }
+
+window.onload = showDashboard;
+</script>
 
 </body>
 </html>
